@@ -55,3 +55,40 @@ An application needs to manage the credentials (Client ID and secret or certific
 **system-assigned managed identity**: This identity is enabled directly on an Azure resource. When the resource is created the managed identity is automatically created and when the resource is deleted, the managed identity is automatically deleted.
 
 **user-assigned managed identity**: This identity is created as an independent Azure resource and can be assigned to one or more resources. Since it is not tied to a specific resource, it can be shared across different Azure resources and managed separately from the resource lifecycle. Useful when you want to share the same identity across multiple resources for consistent access to Azure services.
+
+## Groups
+
+There a group types:
+
+- Security Groups (for access to Azure resources)
+- M365 Groups (for access to Microsoft 365 (collaboration))
+
+Members are manually assigned to **assigned groups**.  
+Members are automatically assigned to **dynamic groups** based on user profile attributes.
+
+Group management can be delegated to a group owner.
+
+### Dynamic Groups
+
+- Dynamic User Groups
+- Dynamic Device Groups
+- Dynamic M365 Groups
+
+Dynamics groups have a rule that specifies when a user/device is added to the group based on the user/device attributes. Azure manages dynamic groups. When for example user1 is member of group IT because of his department attribute and when his department attribute is changed to Finance, then automatically user1 will be member of group Finance and will not be member anymore of group IT. The group owner cannot manually assign members to dynamic groups. The group owner can change the dynamic group attributes, for example the owner can change the group from dynamic to assigned. Then the owner can manually add new member to the group. Note that there might be some delay (max 24 hours but usually within a minute) before members are automatically assigned by the platform to a dynamic group.
+
+For dynamic user and M365 groups (but not dynamic device groups) you need to have the Entra ID Premium P1 license.
+
+## Licenses
+
+You can register your licenses in a Entra ID tenant and assign it to users. For microsoft licenses a user must have a location property otherwise the license assignment will fail, because some microsoft license have location restrictions. You can also assign a license to a group
+
+## Administrative Unit
+
+An administrative unit is a group of Entra ID objects (user/devices/groups) that are managed by one or more administrators to which the Entra ID global administrator has delegated some Entra ID permissions. Note the Entra ID global administrator can still manage the Entra ID objects within the administrative unuit.  
+![administrative unit](entra_id_au.png)
+
+There might Entra ID objects (for example C-suite identities) that must not be managed by the Entra ID tenant global adminsitrator but by a specific group of administrators. These Entra ID object will be grouped in a **RESTRICTED-ExecLeadership** Administrative Unit. Only Executive IT administrators can manage the Entra ID objects in this administrative unit.
+![restricted administrative unit](entra_id_restricted_au.png)
+
+You cannot nest administrative units.  
+Entra ID Premium P1 license required
