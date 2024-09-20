@@ -92,3 +92,98 @@ There might Entra ID objects (for example C-suite identities) that must not be m
 
 You cannot nest administrative units.  
 Entra ID Premium P1 license required
+
+## RBAC
+
+![rbac overview](rbac_overview.png)
+
+Note RBAC **is not** Azure Policy  
+RBAC is for permissions  
+Azure Policy is for standards
+
+### Security Principal
+
+- User Identity
+- Security Group
+- App Identity
+- Managed Identity
+
+### Role
+
+A role grants permissions. There are 2 type of role definitions:
+
+- built-in roles
+- custom roles
+
+Type of built-in roles that have access to the control plane of an Azure resource
+
+- OWNER (full access and allowed to change access)
+- CONTRIBUTER (full access and not allowed to change access)
+- READER (read-only)
+
+Type of built-in roles that have access to the data plane of an Azure resource
+
+- DATA
+
+### Scope
+
+- Management Group
+- Subscription
+- Resource Group
+- Resource
+
+## Entra ID Role
+
+Entra ID Role grants permission to manage Entra ID objects (such as create user, register device, reset password, ...). You can use Entra ID built-ins roles and Entra ID custom roles. Entra ID custom roles needs to be created first and for that one you need an Entra ID P1 license. Note thsi license is not required for creating oordinary custome roles.
+
+Entra ID roles must have an security principal (user, security group (required Entra ID P1 license), app) and scope. The scope can be:
+
+- Entra ID tenant (directory)
+- Administrative Unit
+- App
+
+## RBAC Custom Roles
+
+For a RBAC custom role you need to create a role definition (JSON document) and you need to have `Owner` or `User Access Admin` permissions:
+![role definition](role_definition.png)
+
+The metadata part of a role definition consists of:
+
+- Name: role definition name
+- description: role definition description
+
+The permission part of a role definition consists of:
+
+- Actions:list of allowed control plane actions
+- NotActions: list of disallowed control plane actions (NotActions have higher precedence than Actions)
+- DataActions: list of allowed data plane actions
+- NotDataActions: list of disallowed data plane actions (NotDataActions have higher precedence than DataActions)
+
+The scope of a role definition consists can be :
+
+- Root `/\*`: available to all scopes.Only usable by built-in roles
+- Management Groups `/providers/Microsoftt.Management/managementGroups/{ID}`
+- Subscriptions `/subscriptions/{ID}`
+- Resource Groups `/subscriptions/{ID}/resourcegroups/{name}`
+
+Powershell
+
+```
+mkdir roles
+cd roles
+code {filename}.json #use vsc to create custom role definition as in example above
+New-AzRoleDefinition -InputFile {filename}.json
+```
+
+Now you can assign the RBAC custom role to an identity (Subscription > Access control(IAM) > Add > Role assignement > Type = custom role)
+
+## Entra ID Custom Roles
+
+Entra ID custom roles are similar to RBAC custom role, except Actions/NotActions/DataActions/NotDataActions are all defined as:
+
+```
+microsoft.directory/....
+```
+
+Entra ID custom roles requires Entra ID Premium P1 license
+To create Entra ID custom roles you need to have `Global admin` or `Privileged Role Admin` permissions

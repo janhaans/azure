@@ -6,7 +6,8 @@ A billing account is a billing profile that contains all billing information.
 Each Azure subscription is associated with one Entra ID tenant for Identity and Access Management (IAM).  
 You can set Azure policies at a subscription.  
 A subscription can be member of one management group.  
-Set up a budget for each subscription to prevent unexpected high costs
+Set up a budget for each subscription to prevent unexpected high costs  
+The user that creates the subscription is the subscription owner and has full access to the subscription.
 
 ## Subscription license models
 
