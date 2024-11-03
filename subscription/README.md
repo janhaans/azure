@@ -17,7 +17,7 @@ The user that creates the subscription is the subscription owner and has full ac
 
 ## Technical support models
 
-- Free (billing and subscription management support but no technical support)
+- Basic (billing and subscription management support but no technical support) Free!
 - Developer
 - Standard
 - Professional Direct

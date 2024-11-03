@@ -1,11 +1,22 @@
 # Microsoft Entra ID
 
-- Identity Management
-- Access Management
-- SSO
-- Federation
+EntraID is not an Azure product. You can use it with many other products outside Azure.
 
-Bases on these features other more advanced features (such as Conditional Access, Privileged Identity Management and Identity Protection) are availabe. Access to these advanced features is dependent on Entra ID license model.
+EntraID is a SaaS solution which provides the following services
+
+- Identity Management
+- Identity Security and Protection
+- Device Management
+- Access Management (Resource Access)
+- SSO and Federation
+
+Extended features built upon the standard EntraID capabilities
+
+- Privileged Identity Management (Just-in-Time Access, Access Reviews)
+- Conditional Access (Conditional Access Policies)
+- Identity Protection (sign-in Risk,, User Risk)
+- Self Service
+  Bases on these features other more advanced features (such as Conditional Access, Privileged Identity Management and Identity Protection) are availabe. Access to these advanced features is dependent on Entra ID license model.
 
 Entra ID is used to manage identities and access to Azure subscriptios, Office365 subscriptions and other SAAS subscriptions  
 One Entra ID tenant can be associated with zero or more Azure subscriptions  
@@ -27,8 +38,19 @@ Microsoft Entra ID is something other than Active Diretcory Domain Services
 
 ![Entra ID versus AD DS](entra_id_versus_ad_ds.png)
 
+## Portals to manage EntraID
+
+- [Azure Portal](https://azure.portal.com)
+- [EntraId Portal](https://entra.microsoft.com)
+- [ Microsoft Administration Portal](https://admin.microsoft.com)
+
+## Portal to manage user account
+
+- [My Account](https://myaccount.microsoft.com)
+
 ## Custom Domain
 
+Every EntraID tenant will have primary domain `onmicrosoft.com`
 Next to an Entra ID tenant primary domain name that has been created automatically (`.onmicrosoft.com`) you can create a custom domain name that is for users much easier to remember. When you create a custom domain name you must prove to MS you are the owner of the provided domain name. To prove this you have to add a specific TXT or MX record to the DNS registrar (Azure DNS, GoDaddy, AWS Route53). The custom domain can be configured to be the primary domain of the Entra ID tenant.
 
 ## User identities
@@ -43,9 +65,9 @@ There are bulk operations to create, invite or delete multiple identities at one
 
 ![application identities](application_identities.png)
 
-- An application identy helps to control access to the application and the access the application has to other resources
-- The application itself can reside anywhere; inside or outside Azure
-- Each application identity has a client ID and client secret or certificate. The application uses these credentials to prove that its identity to the Entra ID tenant. The application has to manage these credentials and store it in a safe place.
+- An application identy helps to control access to the application itself and access of the application has to other resources
+- The application itself can reside anywhere, inside or outside Azure
+- Each application identity (or client identity) is similar to user identity. A user identity has a username and a password, an application identity has a client ID and client secret or certificate. The application uses these credentials to prove that its identity to the Entra ID tenant. The application has to manage these credentials and store it in a safe place.
 - Sometimes the name service principal is used for application identity
 
 ## Managed Identity
@@ -61,12 +83,25 @@ An application needs to manage the credentials (Client ID and secret or certific
 There a group types:
 
 - Security Groups (for access to Azure resources)
-- M365 Groups (for access to Microsoft 365 (collaboration))
+- M365 Groups (for access to Microsoft 365 resource, like Outlook, Sharepoint, Teams and Power BI resources, for collaboration))
 
 Members are manually assigned to **assigned groups**.  
 Members are automatically assigned to **dynamic groups** based on user profile attributes.
 
 Group management can be delegated to a group owner.
+
+Members of a group can be:
+
+- Users
+- Groups
+- Devices
+- Enterprise Applications
+
+For each group access can be configured to:
+
+- Azure resources
+- Applications
+- Licenses
 
 ### Dynamic Groups
 
@@ -74,9 +109,11 @@ Group management can be delegated to a group owner.
 - Dynamic Device Groups
 - Dynamic M365 Groups
 
-Dynamics groups have a rule that specifies when a user/device is added to the group based on the user/device attributes. Azure manages dynamic groups. When for example user1 is member of group IT because of his department attribute and when his department attribute is changed to Finance, then automatically user1 will be member of group Finance and will not be member anymore of group IT. The group owner cannot manually assign members to dynamic groups. The group owner can change the dynamic group attributes, for example the owner can change the group from dynamic to assigned. Then the owner can manually add new member to the group. Note that there might be some delay (max 24 hours but usually within a minute) before members are automatically assigned by the platform to a dynamic group.
+The purpose of dynamic groups is to automatically add members. Dynamics groups have a rule that specifies when a user/device is added to the group based on the user/device attributes. Azure manages dynamic groups. When for example user1 is member of group IT because of his department attribute and when his department attribute is changed to Finance, then automatically user1 will be member of group Finance and will not be member anymore of group IT. The group owner cannot manually assign members to dynamic groups. The group owner can change the dynamic group attributes, for example the owner can change the group from dynamic to assigned. Then the owner can manually add new member to the group. Note that there might be some delay (max 24 hours but usually within a minute) before members are automatically assigned by the platform to a dynamic group.
 
 For dynamic user and M365 groups (but not dynamic device groups) you need to have the Entra ID Premium P1 license.
+
+Dynamic groups can be for users and devices but not for both.
 
 ## Licenses
 
@@ -86,6 +123,8 @@ You can register your licenses in a Entra ID tenant and assign it to users. For 
 
 An administrative unit is a group of Entra ID objects (user/devices/groups) that are managed by one or more administrators to which the Entra ID global administrator has delegated some Entra ID permissions. Note the Entra ID global administrator can still manage the Entra ID objects within the administrative unuit.  
 ![administrative unit](entra_id_au.png)
+
+## Restricted Administrative Unit
 
 There might Entra ID objects (for example C-suite identities) that must not be managed by the Entra ID tenant global adminsitrator but by a specific group of administrators. These Entra ID object will be grouped in a **RESTRICTED-ExecLeadership** Administrative Unit. Only Executive IT administrators can manage the Entra ID objects in this administrative unit.
 ![restricted administrative unit](entra_id_restricted_au.png)
