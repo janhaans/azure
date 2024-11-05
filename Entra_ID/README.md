@@ -154,15 +154,21 @@ A role grants permissions. There are 2 type of role definitions:
 - built-in roles
 - custom roles
 
-Type of built-in roles that have access to the control plane of an Azure resource
+Type of management plane built-in roles
 
-- OWNER (full access and allowed to change access)
-- CONTRIBUTER (full access and not allowed to change access)
-- READER (read-only)
+- OWNER (full access: resource management and assign permissions)
+- CONTRIBUTER (resource management (create, update, delete settings) but cannot assign permissions)
+- READER (read-only access)
 
-Type of built-in roles that have access to the data plane of an Azure resource
+Type of data plane built-in roles
 
-- DATA
+- DATA (Data roles provide specific permissions related to data plane access (e.g., accessing and managing data within Azure services, like blob storage, databases, or queues)
+
+The roles above are `Job Function Roles` but there are also `Privileged Administrator Roles` which has scope set to all resources in a Subscription
+
+- Owner
+- Contributor
+- User Access Administrator
 
 ### Scope
 
@@ -173,7 +179,7 @@ Type of built-in roles that have access to the data plane of an Azure resource
 
 ## Entra ID Role
 
-Entra ID Role grants permission to manage Entra ID objects (such as create user, register device, reset password, ...). You can use Entra ID built-ins roles and Entra ID custom roles. Entra ID custom roles needs to be created first and for that one you need an Entra ID P1 license. Note thsi license is not required for creating oordinary custome roles.
+Entra ID Roles are similar to ordinary Roles only the scope is Entra ID (Tenant, Administrative Unit, App). Entra ID Role grants permission to manage Entra ID objects (such as create user, register device, reset password, ...). You can use Entra ID built-ins roles and Entra ID custom roles. Entra ID custom roles needs to be created first and for that one you need an Entra ID P1 license. Note thsi license is not required for creating ordinary custom roles.
 
 Entra ID roles must have an security principal (user, security group (required Entra ID P1 license), app) and scope. The scope can be:
 
@@ -200,19 +206,43 @@ The permission part of a role definition consists of:
 
 The scope of a role definition consists can be :
 
-- Root `/\*`: available to all scopes.Only usable by built-in roles
-- Management Groups `/providers/Microsoftt.Management/managementGroups/{ID}`
+- Root `/*`: available to all scopes. Only usable by built-in roles
+- Management Groups `/providers/Microsoft.Management/managementGroups/{ID}`
 - Subscriptions `/subscriptions/{ID}`
 - Resource Groups `/subscriptions/{ID}/resourcegroups/{name}`
 
+To configure RBAC Custom Roles you need to have `Owner` or `User Access Admin` Role.
+
 Powershell
 
+- Create a new folder: `mkdir roles`
+- Navigate to the new folder: `cd roles`
+- Create Role definition file `testrole.json`
+
 ```
-mkdir roles
-cd roles
-code {filename}.json #use vsc to create custom role definition as in example above
-New-AzRoleDefinition -InputFile {filename}.json
+{
+  "name": "Test Role",
+  "description": "Access for the koalification team.",
+  "actions": [
+    "Microsoft.Compute/virtualMachines/*",
+    "Microsoft.Support/supportTickets/write",
+    "Microsoft.Support/*/read",
+    "Microsoft.Resources/subscriptions/resourceGroups/read"
+  ],
+  "notActions": [
+    "Microsoft.Compute/virtualMachines/Delete"
+  ],
+  "dataActions": [
+    "Microsoft.Compute/snapshots/download/action"
+  ],
+  "notDataActions": [],
+  "assignableScopes": [
+    "/subscriptions/{subscriptionID}"
+  ]
+}
 ```
+
+- Create the role: `New-AzRoleDefinition -InputFile ./testrole.json`
 
 Now you can assign the RBAC custom role to an identity (Subscription > Access control(IAM) > Add > Role assignement > Type = custom role)
 
@@ -221,8 +251,14 @@ Now you can assign the RBAC custom role to an identity (Subscription > Access co
 Entra ID custom roles are similar to RBAC custom role, except Actions/NotActions/DataActions/NotDataActions are all defined as:
 
 ```
+
 microsoft.directory/....
+
 ```
 
 Entra ID custom roles requires Entra ID Premium P1 license
 To create Entra ID custom roles you need to have `Global admin` or `Privileged Role Admin` permissions
+
+```
+
+```
