@@ -559,3 +559,51 @@ az monitor autoscale rule create \
 ### VMSS Health and Repair
 
 Azure Virtual Machine Scale Sets (VMSS) Health and Repair is a feature that ensures the instances in a scale set remain healthy and operational. It monitors the health of VMs within the scale set and automatically repairs or replaces unhealthy instances to maintain the desired state and application availability.
+
+## Availability Set
+
+An Azure Availability Set is a logical grouping of Virtual Machines (VMs) within a datacenter designed to provide redundancy and availability. It ensures that your application remains operational during planned maintenance events or unexpected hardware failures.
+
+![availability set](availabaility-set.png)
+
+- **Fault Domain (FD)**: A fault domain is a group of hardware (e.g., servers, network switches) that share a common power source and network connection. Default is 3 FDs.
+- **Update Domain (UD)**: An update domain ensures that not all VMs are updated simultaneously during planned maintenance (e.g., patching or OS updates). Default is 5 UDs.
+- **Redundancy and High Availability**: Distributes VMs across multiple FDs and UDs to reduce the likelihood of simultaneous failures.
+- **No Extra Cost**: Using availability sets does not incur additional costs; you only pay for the VMs and associated resources.
+- First create an Availabilty Set, then add a VM. An existing VM cannot be added to a new Availability Set
+- When you add a VM to an Avilability Set it has to match the resource group and region as well.
+- Virtual Machine Scale Sets (VMSS) have an implicit Availability Set
+
+### Create an Availability Set
+
+```
+az vm availability-set create \
+  --resource-group myResourceGroup \
+  --name myAvailabilitySet \
+  --platform-fault-domain-count 3 \
+  --platform-update-domain-count 5
+```
+
+### Add an VM to an Availability Set
+
+```
+az vm create \
+  --resource-group myResourceGroup \
+  --name myVM1 \
+  --availability-set myAvailabilitySet \
+  --image UbuntuLTS \
+  --admin-username azureuser \
+  --generate-ssh-keys
+```
+
+## Availability Zone
+
+An Azure Availability Zone is a high-availability offering within an Azure region that provides fault isolation by dividing the region into physically separate and independent zones. Each zone is a unique physical location within a region, with its own power, cooling, and networking infrastructure.
+
+## Proximity Placement Group
+
+![placement group](placement-group.png)
+
+## VM Encryption with Azure Disk Encryption
+
+![disk encryption](disk-encryption.png)
