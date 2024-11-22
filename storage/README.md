@@ -160,3 +160,51 @@ There is also **RA-GZRS** next to **GZRS**
 - Immutable retention or Leak Hold can be set at container level or at storage account level.
 
 ![immutable blob](immutable-blob.png)
+
+## Azure Storage Encryption
+
+Encrypt data:
+
+- At rest: **Storage Service Encryption** or **Service Side Encryption** (SSE),**Infrastructure Encryption** (double encryption)
+- In Transit: **SSL/TLS**
+
+### SSE
+
+- SSE is switched on by default at storage account
+- By default only blobs and files are encrypted but when you create the storage account you can select to encrypt queues and tables too. This option cannot be changed after the creation of the storage account
+- When you create a storage account you can select Infrastructure Encryption for extra encryption
+
+Encryption Key:
+
+- Platform Mananed Key (PMK)
+- Customer Managed Key (CMK)
+  - The CMK is stored in Azure Key Vault
+  - You need a Managed Identity for storage account with the permission to access the CMK in Azure Key Vault
+- Encryption Scope (Optional): Encrypt blobs/containers with PMK or CMK
+
+![sse](sse.png)
+
+## Azure Files
+
+- SMB (Windows)
+- NFS (Linux)
+
+### Azure Files - Storage Tiers
+
+![azure file tiers](azure-file-tiers.png)
+
+### Azure Files - Architecture
+
+![azure files architecture](azure-files-architecture.png)
+
+### Azure Files - Connectivity and Access control
+
+![azure files connectivity](azure-files-connectivity.png)
+
+![azure files access control](azure-files-access-control.png)
+
+Identity Source can be:
+
+- Active Directory Domain Controller you host on a Windows Server (on-premises host or Azure VM)
+- Azure Active Directory Domain Services (Azure AD DS) (Microsoft Managed AD DS)
+- Azure AD Kerberos (devices joined to an AD)
