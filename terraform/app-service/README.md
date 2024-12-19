@@ -23,3 +23,5 @@ terraform destroy -auto-approve
 ```
 
 Terraform outputs the URL of the Azure App Service.
+
+## Deploy
